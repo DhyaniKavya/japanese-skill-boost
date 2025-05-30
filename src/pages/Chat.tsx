@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -137,7 +136,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
       <Navigation />
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -145,13 +144,13 @@ const Chat = () => {
           
           {/* Chat Interface */}
           <div className="lg:col-span-3">
-            <Card className="h-[600px] flex flex-col border-0 bg-white/60 backdrop-blur-sm">
+            <Card className="h-[600px] flex flex-col border-0 bg-white/70 backdrop-blur-sm shadow-xl">
               <CardHeader className="flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
-                    <span className="text-2xl">🤖</span>
+                    <span className="text-2xl">🌸</span>
                     Japanese AI Chat Assistant
-                    <Badge variant="secondary" className="bg-green-100 text-green-700">
+                    <Badge variant="secondary" className="bg-pink-100 text-pink-700">
                       AI Powered
                     </Badge>
                   </CardTitle>
@@ -160,6 +159,7 @@ const Chat = () => {
                       variant={currentLanguage === 'japanese' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setCurrentLanguage('japanese')}
+                      className={currentLanguage === 'japanese' ? 'bg-pink-500 hover:bg-pink-600' : 'border-pink-300 text-pink-600 hover:bg-pink-50'}
                     >
                       🇯🇵 日本語
                     </Button>
@@ -167,6 +167,7 @@ const Chat = () => {
                       variant={currentLanguage === 'english' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setCurrentLanguage('english')}
+                      className={currentLanguage === 'english' ? 'bg-pink-500 hover:bg-pink-600' : 'border-pink-300 text-pink-600 hover:bg-pink-50'}
                     >
                       🇺🇸 English
                     </Button>
@@ -185,13 +186,13 @@ const Chat = () => {
                       <div
                         className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                           message.isUser
-                            ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                            : 'bg-white border border-gray-200 text-gray-900'
+                            ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white'
+                            : 'bg-white/90 border border-pink-200 text-gray-900 shadow-sm'
                         }`}
                       >
                         <div className="flex items-center gap-2 mb-1">
-                          {!message.isUser && <span className="text-lg">🤖</span>}
-                          <Badge variant="secondary" className="text-xs">
+                          {!message.isUser && <span className="text-lg">🌸</span>}
+                          <Badge variant="secondary" className="text-xs bg-pink-50 text-pink-700">
                             {message.language === 'japanese' ? '日本語' : 'English'}
                           </Badge>
                         </div>
@@ -205,13 +206,13 @@ const Chat = () => {
                   
                   {isTyping && (
                     <div className="flex justify-start">
-                      <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
+                      <div className="bg-white/90 border border-pink-200 rounded-2xl px-4 py-3 shadow-sm">
                         <div className="flex items-center gap-2">
-                          <span className="text-lg">🤖</span>
+                          <span className="text-lg">🌸</span>
                           <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+                            <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce delay-100"></div>
+                            <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce delay-200"></div>
                           </div>
                         </div>
                       </div>
@@ -227,10 +228,14 @@ const Chat = () => {
                     onChange={(e) => setInputText(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder={currentLanguage === 'japanese' ? 'メッセージを入力してください...' : 'Type your message...'}
-                    className="flex-1"
+                    className="flex-1 border-pink-200 focus:border-pink-400 focus:ring-pink-400"
                     disabled={isTyping}
                   />
-                  <Button onClick={handleSendMessage} disabled={!inputText.trim() || isTyping}>
+                  <Button 
+                    onClick={handleSendMessage} 
+                    disabled={!inputText.trim() || isTyping}
+                    className="bg-pink-500 hover:bg-pink-600 text-white"
+                  >
                     送信
                   </Button>
                 </div>
@@ -241,26 +246,26 @@ const Chat = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Features */}
-            <Card className="border-0 bg-white/60 backdrop-blur-sm">
+            <Card className="border-0 bg-white/70 backdrop-blur-sm shadow-lg">
               <CardHeader>
-                <CardTitle className="text-sm">Chat Features</CardTitle>
+                <CardTitle className="text-sm text-pink-800">Chat Features</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-green-500">✓</span>
+                    <span className="text-pink-500">✓</span>
                     <span>AI-powered responses</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-green-500">✓</span>
+                    <span className="text-pink-500">✓</span>
                     <span>Bilingual support</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-green-500">✓</span>
+                    <span className="text-pink-500">✓</span>
                     <span>Natural conversations</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-green-500">✓</span>
+                    <span className="text-pink-500">✓</span>
                     <span>Instant answers</span>
                   </div>
                 </div>
@@ -268,9 +273,9 @@ const Chat = () => {
             </Card>
 
             {/* Tips */}
-            <Card className="border-0 bg-white/60 backdrop-blur-sm">
+            <Card className="border-0 bg-white/70 backdrop-blur-sm shadow-lg">
               <CardHeader>
-                <CardTitle className="text-sm">💡 Tips</CardTitle>
+                <CardTitle className="text-sm text-pink-800">🌸 Tips</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-xs space-y-2 text-gray-600">
