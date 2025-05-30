@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
@@ -18,7 +19,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'こんにちは！日本語で話しましょう！Hello! Let\'s practice Japanese together!',
+      text: 'こんにちは！日本語で話しましょう！Hello! Let\'s practice Japanese together! I can now answer any questions you have using AI!',
       isUser: false,
       timestamp: new Date(),
       language: 'japanese'
@@ -29,6 +30,8 @@ const Chat = () => {
   const [currentLanguage, setCurrentLanguage] = useState<'japanese' | 'english'>('japanese');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const API_KEY = 'AIzaSyA4qjbRCf3MqBo5p_OmuM4KWFnRM3Q4tG8';
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -37,32 +40,61 @@ const Chat = () => {
     scrollToBottom();
   }, [messages]);
 
-  const simulateAIResponse = (userMessage: string, language: 'japanese' | 'english'): string => {
-    const japaneseResponses = [
-      'それは面白いですね！もっと教えてください。',
-      'とても良い質問ですね。一緒に考えましょう。',
-      'はい、理解しました。他に何か質問がありますか？',
-      'そうですね。日本語の勉強はどうですか？',
-      'ありがとうございます！日本語が上手になりましたね。',
-      'この表現はとても自然です。素晴らしいです！',
-      '新しい単語を覚えましたか？使ってみてください。'
-    ];
+  const getAIResponse = async (userMessage: string, language: 'japanese' | 'english'): Promise<string> => {
+    try {
+      const languageContext = language === 'japanese' 
+        ? 'Please respond in Japanese when appropriate, and help with Japanese language learning. Mix Japanese and English as needed for learning.'
+        : 'Please respond in English and help with any questions the user has.';
 
-    const englishResponses = [
-      'That\'s very interesting! Can you tell me more about it?',
-      'Great question! Let\'s think about this together.',
-      'I understand. Do you have any other questions?',
-      'How is your Japanese study going?',
-      'Thank you! Your Japanese is getting much better.',
-      'That expression sounds very natural. Excellent work!',
-      'Have you learned any new words? Please try using them.'
-    ];
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `${languageContext}\n\nUser message: ${userMessage}`
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            topP: 0.8,
+            topK: 40,
+            maxOutputTokens: 1000,
+          }
+        })
+      });
 
-    const responses = language === 'japanese' ? japaneseResponses : englishResponses;
-    return responses[Math.floor(Math.random() * responses.length)];
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+        return data.candidates[0].content.parts[0].text;
+      } else {
+        throw new Error('No response generated');
+      }
+    } catch (error) {
+      console.error('Error calling Gemini API:', error);
+      toast.error('Failed to get AI response. Please try again.');
+      
+      // Fallback responses
+      const fallbackResponses = language === 'japanese' ? [
+        '申し訳ございませんが、現在AIサービスに接続できません。もう一度お試しください。',
+        'すみません、少し問題が発生しました。他の質問はありますか？'
+      ] : [
+        'I apologize, but I\'m having trouble connecting to the AI service right now. Please try again.',
+        'Sorry, there was an issue. Do you have any other questions?'
+      ];
+      
+      return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+    }
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputText.trim()) return;
 
     const userMessage: Message = {
@@ -74,22 +106,27 @@ const Chat = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const messageText = inputText;
     setInputText('');
     setIsTyping(true);
 
-    // Simulate AI thinking time
-    setTimeout(() => {
+    try {
+      const aiResponseText = await getAIResponse(messageText, currentLanguage);
+      
       const aiResponse: Message = {
         id: Date.now().toString() + '-ai',
-        text: simulateAIResponse(inputText, currentLanguage),
+        text: aiResponseText,
         isUser: false,
         timestamp: new Date(),
         language: currentLanguage
       };
 
       setMessages(prev => [...prev, aiResponse]);
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+    } finally {
       setIsTyping(false);
-    }, 1000 + Math.random() * 2000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -133,6 +170,9 @@ const Chat = () => {
                   <CardTitle className="flex items-center gap-2">
                     <span className="text-2xl">🤖</span>
                     Japanese AI Chat Assistant
+                    <Badge variant="secondary" className="bg-green-100 text-green-700">
+                      AI Powered
+                    </Badge>
                   </CardTitle>
                   <div className="flex gap-2">
                     <Button
@@ -174,7 +214,7 @@ const Chat = () => {
                             {message.language === 'japanese' ? '日本語' : 'English'}
                           </Badge>
                         </div>
-                        <p className="text-sm">{message.text}</p>
+                        <p className="text-sm whitespace-pre-wrap">{message.text}</p>
                         <p className="text-xs opacity-70 mt-2">
                           {message.timestamp.toLocaleTimeString()}
                         </p>
@@ -207,8 +247,9 @@ const Chat = () => {
                     onKeyPress={handleKeyPress}
                     placeholder={currentLanguage === 'japanese' ? 'メッセージを入力してください...' : 'Type your message...'}
                     className="flex-1"
+                    disabled={isTyping}
                   />
-                  <Button onClick={handleSendMessage} disabled={!inputText.trim()}>
+                  <Button onClick={handleSendMessage} disabled={!inputText.trim() || isTyping}>
                     送信
                   </Button>
                 </div>
@@ -249,7 +290,7 @@ const Chat = () => {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm">
                     <span className="text-green-500">✓</span>
-                    <span>Real-time responses</span>
+                    <span>AI-powered responses</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <span className="text-green-500">✓</span>
@@ -260,8 +301,8 @@ const Chat = () => {
                     <span>Natural conversations</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-blue-500">🔜</span>
-                    <span>Voice chat (coming soon)</span>
+                    <span className="text-green-500">✓</span>
+                    <span>Instant answers</span>
                   </div>
                 </div>
               </CardContent>
@@ -274,10 +315,10 @@ const Chat = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-xs space-y-2 text-gray-600">
-                  <p>• Start with simple greetings</p>
-                  <p>• Mix Japanese and English</p>
-                  <p>• Ask about grammar</p>
-                  <p>• Practice daily conversations</p>
+                  <p>• Ask me anything in Japanese or English</p>
+                  <p>• I can help with grammar and translation</p>
+                  <p>• Practice conversations with me</p>
+                  <p>• Ask about Japanese culture</p>
                 </div>
               </CardContent>
             </Card>
