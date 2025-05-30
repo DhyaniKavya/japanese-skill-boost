@@ -46,7 +46,7 @@ const Chat = () => {
         ? 'Please respond in Japanese when appropriate, and help with Japanese language learning. Mix Japanese and English as needed for learning.'
         : 'Please respond in English and help with any questions the user has.';
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -134,25 +134,6 @@ const Chat = () => {
       e.preventDefault();
       handleSendMessage();
     }
-  };
-
-  const commonPhrases = {
-    japanese: [
-      'こんにちは',
-      'ありがとうございます',
-      'すみません',
-      'お疲れ様です',
-      'はじめまして',
-      'よろしくお願いします'
-    ],
-    english: [
-      'Hello',
-      'Thank you',
-      'Excuse me',
-      'Nice to meet you',
-      'How are you?',
-      'Good morning'
-    ]
   };
 
   return (
@@ -259,28 +240,6 @@ const Chat = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Quick Phrases */}
-            <Card className="border-0 bg-white/60 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-sm">Quick Phrases</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {commonPhrases[currentLanguage].map((phrase, index) => (
-                    <Button
-                      key={index}
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start text-left h-auto p-2"
-                      onClick={() => setInputText(phrase)}
-                    >
-                      <span className="text-xs">{phrase}</span>
-                    </Button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Features */}
             <Card className="border-0 bg-white/60 backdrop-blur-sm">
               <CardHeader>
