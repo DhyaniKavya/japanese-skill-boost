@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import AnimeGuide from "@/components/AnimeGuide";
 import FloatingElements from "@/components/FloatingElements";
-import { ArrowRight, Star, Users, BookOpen, Briefcase, MessageCircle } from "lucide-react";
+import { ArrowRight, Star, Users, BookOpen, Briefcase, MessageCircle, Sparkles, Globe, Zap } from "lucide-react";
 
 const Index = () => {
   const features = [
@@ -64,76 +65,141 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-orange-50 relative overflow-hidden">
-      <Navigation />
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Enhanced Background with Multiple Layers */}
+      <div className="absolute inset-0 bg-gradient-to-br from-red-50 via-pink-50 to-orange-50"></div>
+      <div className="absolute inset-0 bg-gradient-to-tr from-purple-50/30 via-transparent to-blue-50/30"></div>
+      
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-red-200/20 to-pink-200/20 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-orange-200/20 to-yellow-200/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-pink-200/10 to-red-200/10 rounded-full blur-2xl animate-pulse"></div>
+      </div>
+
+      {/* Fixed Navigation Container */}
+      <div className="relative z-50">
+        <Navigation />
+      </div>
+      
       <FloatingElements />
       
-      {/* Hero Section */}
-      <div className="relative">
+      {/* Enhanced Hero Section */}
+      <div className="relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          {/* Premium Header with decorative elements */}
+          <div className="text-center mb-16 relative">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-32 h-32 bg-gradient-to-r from-red-500/10 to-pink-500/10 rounded-full blur-2xl animate-pulse"></div>
+            </div>
+            <div className="relative">
+              <Badge variant="outline" className="bg-white/80 backdrop-blur-sm border-red-200 shadow-lg mb-6 px-4 py-2">
+                <Sparkles className="w-4 h-4 mr-2 text-red-500" />
+                <span className="bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent font-semibold">
+                  Premium Japanese Learning Platform
+                </span>
+              </Badge>
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <div className="w-8 h-0.5 bg-gradient-to-r from-transparent to-red-300"></div>
+                <Globe className="w-6 h-6 text-red-500 animate-spin" style={{ animationDuration: '3s' }} />
+                <div className="w-8 h-0.5 bg-gradient-to-l from-transparent to-red-300"></div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-left space-y-8">
-              <div className="space-y-4">
-                <Badge variant="outline" className="bg-white/60 backdrop-blur-sm border-red-200">
-                  <Star className="w-4 h-4 mr-1" />
-                  Trusted by 10,000+ learners
-                </Badge>
-                <h1 className="text-5xl md:text-7xl font-bold text-gray-900 leading-tight">
-                  Master{" "}
-                  <span className="bg-gradient-to-r from-red-600 via-pink-600 to-red-700 bg-clip-text text-transparent">
-                    Japanese
-                  </span>
-                  <br />
-                  Like Never Before
-                </h1>
-                <p className="text-xl text-gray-600 max-w-2xl leading-relaxed">
-                  Join the most comprehensive Japanese learning platform. From beginner to business level, 
-                  we provide everything you need to succeed in Japan.
-                </p>
+              <div className="space-y-6">
+                <div className="relative">
+                  <h1 className="text-6xl md:text-8xl font-bold text-gray-900 leading-tight relative">
+                    <span className="relative">
+                      Master{" "}
+                      <span className="relative inline-block">
+                        <span className="bg-gradient-to-r from-red-600 via-pink-600 to-red-700 bg-clip-text text-transparent">
+                          Japanese
+                        </span>
+                        <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-pink-500 rounded-full animate-pulse"></div>
+                      </span>
+                    </span>
+                    <br />
+                    <span className="relative">
+                      Like Never{" "}
+                      <span className="relative inline-block">
+                        Before
+                        <Zap className="absolute -top-2 -right-8 w-8 h-8 text-yellow-400 animate-bounce" />
+                      </span>
+                    </span>
+                  </h1>
+                  
+                  {/* Decorative elements around the title */}
+                  <div className="absolute -top-4 -left-4 w-12 h-12 border-l-4 border-t-4 border-red-300 rounded-tl-2xl opacity-60"></div>
+                  <div className="absolute -bottom-4 -right-4 w-12 h-12 border-r-4 border-b-4 border-pink-300 rounded-br-2xl opacity-60"></div>
+                </div>
+                
+                <div className="relative">
+                  <p className="text-xl text-gray-600 max-w-2xl leading-relaxed pl-6 border-l-4 border-gradient-to-b from-red-400 to-pink-400 bg-gradient-to-r from-white/60 to-transparent backdrop-blur-sm rounded-r-lg py-4 pr-4">
+                    Join the most comprehensive Japanese learning platform. From beginner to business level, 
+                    we provide everything you need to succeed in Japan with cutting-edge AI technology.
+                  </p>
+                  <div className="absolute -left-2 top-6 w-4 h-4 bg-red-400 rounded-full animate-pulse"></div>
+                </div>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                <Button asChild size="lg" className="bg-gradient-to-r from-red-600 via-pink-600 to-red-700 hover:from-red-700 hover:via-pink-700 hover:to-red-800 shadow-2xl hover:shadow-3xl transition-all duration-300 group relative overflow-hidden">
                   <Link to="/chat">
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <Sparkles className="w-5 h-5 mr-2 group-hover:animate-spin" />
                     Start Learning Free
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="border-2 border-red-200 hover:bg-red-50 shadow-md hover:shadow-lg transition-all duration-300">
+                <Button asChild variant="outline" size="lg" className="border-2 border-red-200 hover:bg-red-50 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm group">
                   <Link to="/jobs">
+                    <Globe className="w-5 h-5 mr-2 group-hover:animate-spin" />
                     Explore Opportunities
                   </Link>
                 </Button>
               </div>
 
-              {/* Stats */}
+              {/* Enhanced Stats with better styling */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8">
                 {stats.map((stat, index) => (
-                  <div key={index} className="text-center group">
-                    <div className="flex justify-center mb-2">
-                      <stat.icon className="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform" />
+                  <div key={index} className="text-center group relative">
+                    <div className="bg-gradient-to-br from-white/60 to-white/30 backdrop-blur-sm rounded-2xl p-4 shadow-lg group-hover:shadow-xl transition-all duration-300 border border-white/40">
+                      <div className="flex justify-center mb-3">
+                        <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                          <stat.icon className="w-6 h-6 text-white" />
+                        </div>
+                      </div>
+                      <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
+                      <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
                     </div>
-                    <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-                    <div className="text-sm text-gray-600">{stat.label}</div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-pink-500/5 to-red-500/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Anime Guide Character */}
-            <div className="flex justify-center lg:justify-end">
-              <AnimeGuide 
-                character="sakura"
-                message="こんにちは！Welcome to your Japanese learning journey! I'm here to help you every step of the way! 🌸"
-                position="hero"
-              />
+            {/* Anime Guide Character with enhanced container */}
+            <div className="flex justify-center lg:justify-end relative">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-200/20 to-pink-200/20 rounded-3xl blur-2xl scale-110"></div>
+                <div className="relative bg-white/30 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/40">
+                  <AnimeGuide 
+                    character="sakura"
+                    message="こんにちは！Welcome to your Japanese learning journey! I'm here to help you every step of the way! 🌸"
+                    position="hero"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Features Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
         <div className="text-center mb-16 space-y-4">
           <Badge variant="outline" className="bg-white/60 backdrop-blur-sm border-red-200">
             <MessageCircle className="w-4 h-4 mr-1" />
