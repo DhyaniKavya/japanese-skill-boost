@@ -107,80 +107,78 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-left space-y-8">
-              <div className="space-y-6">
-                <div className="relative">
-                  <h1 className="text-6xl md:text-8xl font-bold text-gray-900 leading-tight relative">
-                    <span className="relative">
-                      Master{" "}
-                      <span className="relative inline-block">
-                        <span className="bg-gradient-to-r from-red-600 via-pink-600 to-red-700 bg-clip-text text-transparent">
-                          Japanese
-                        </span>
-                        <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-pink-500 rounded-full animate-pulse"></div>
-                      </span>
+          <div className="text-center mb-16">
+            <div className="relative">
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-gray-900 leading-tight relative mb-8">
+                <span className="relative">
+                  Master{" "}
+                  <span className="relative inline-block">
+                    <span className="bg-gradient-to-r from-red-600 via-pink-600 to-red-700 bg-clip-text text-transparent">
+                      Japanese
                     </span>
-                    <br />
-                    <span className="relative">
-                      Like Never{" "}
-                      <span className="relative inline-block">
-                        Before
-                        <Zap className="absolute -top-2 -right-8 w-8 h-8 text-yellow-400 animate-bounce" />
-                      </span>
-                    </span>
-                  </h1>
-                  
-                  {/* Decorative elements around the title */}
-                  <div className="absolute -top-4 -left-4 w-12 h-12 border-l-4 border-t-4 border-red-300 rounded-tl-2xl opacity-60"></div>
-                  <div className="absolute -bottom-4 -right-4 w-12 h-12 border-r-4 border-b-4 border-pink-300 rounded-br-2xl opacity-60"></div>
-                </div>
-                
-                <div className="relative">
-                  <p className="text-xl text-gray-600 max-w-2xl leading-relaxed pl-6 border-l-4 border-gradient-to-b from-red-400 to-pink-400 bg-gradient-to-r from-white/60 to-transparent backdrop-blur-sm rounded-r-lg py-4 pr-4">
-                    Join the most comprehensive Japanese learning platform. From beginner to business level, 
-                    we provide everything you need to succeed in Japan with cutting-edge AI technology.
-                  </p>
-                  <div className="absolute -left-2 top-6 w-4 h-4 bg-red-400 rounded-full animate-pulse"></div>
-                </div>
-              </div>
+                    <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-pink-500 rounded-full animate-pulse"></div>
+                  </span>
+                </span>
+                <br />
+                <span className="relative">
+                  Like Never{" "}
+                  <span className="relative inline-block">
+                    Before
+                    <Zap className="absolute -top-2 -right-8 w-8 h-8 text-yellow-400 animate-bounce" />
+                  </span>
+                </span>
+              </h1>
               
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="bg-gradient-to-r from-red-600 via-pink-600 to-red-700 hover:from-red-700 hover:via-pink-700 hover:to-red-800 shadow-2xl hover:shadow-3xl transition-all duration-300 group relative overflow-hidden">
-                  <Link to="/chat">
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <Sparkles className="w-5 h-5 mr-2 group-hover:animate-spin" />
-                    Start Learning Free
-                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="border-2 border-red-200 hover:bg-red-50 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm group">
-                  <Link to="/jobs">
-                    <Globe className="w-5 h-5 mr-2 group-hover:animate-spin" />
-                    Explore Opportunities
-                  </Link>
-                </Button>
-              </div>
-
-              {/* Enhanced Stats with better styling */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8">
-                {stats.map((stat, index) => (
-                  <div key={index} className="text-center group relative">
-                    <div className="bg-gradient-to-br from-white/60 to-white/30 backdrop-blur-sm rounded-2xl p-4 shadow-lg group-hover:shadow-xl transition-all duration-300 border border-white/40">
-                      <div className="flex justify-center mb-3">
-                        <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                          <stat.icon className="w-6 h-6 text-white" />
-                        </div>
-                      </div>
-                      <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                      <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-pink-500/5 to-red-500/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  </div>
-                ))}
-              </div>
+              {/* Decorative elements around the title */}
+              <div className="absolute -top-4 -left-4 w-12 h-12 border-l-4 border-t-4 border-red-300 rounded-tl-2xl opacity-60"></div>
+              <div className="absolute -bottom-4 -right-4 w-12 h-12 border-r-4 border-b-4 border-pink-300 rounded-br-2xl opacity-60"></div>
+            </div>
+            
+            <div className="relative">
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-6 border-l-4 border-gradient-to-b from-red-400 to-pink-400 bg-gradient-to-r from-white/60 to-transparent backdrop-blur-sm rounded-r-lg py-4 pr-4">
+                Join the most comprehensive Japanese learning platform. From beginner to business level, 
+                we provide everything you need to succeed in Japan with cutting-edge AI technology.
+              </p>
+              <div className="absolute -left-2 top-6 w-4 h-4 bg-red-400 rounded-full animate-pulse"></div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+              <Button asChild size="lg" className="bg-gradient-to-r from-red-600 via-pink-600 to-red-700 hover:from-red-700 hover:via-pink-700 hover:to-red-800 shadow-2xl hover:shadow-3xl transition-all duration-300 group relative overflow-hidden">
+                <Link to="/chat">
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <Sparkles className="w-5 h-5 mr-2 group-hover:animate-spin" />
+                  Start Learning Free
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="border-2 border-red-200 hover:bg-red-50 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm group">
+                <Link to="/jobs">
+                  <Globe className="w-5 h-5 mr-2 group-hover:animate-spin" />
+                  Explore Opportunities
+                </Link>
+              </Button>
             </div>
 
+            {/* Enhanced Stats with better styling */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-12 max-w-4xl mx-auto">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center group relative">
+                  <div className="bg-gradient-to-br from-white/60 to-white/30 backdrop-blur-sm rounded-2xl p-4 shadow-lg group-hover:shadow-xl transition-all duration-300 border border-white/40">
+                    <div className="flex justify-center mb-3">
+                      <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <stat.icon className="w-6 h-6 text-white" />
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
+                    <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-pink-500/5 to-red-500/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Anime Guide Character with enhanced container */}
             <div className="flex justify-center lg:justify-end relative">
               <div className="relative">
