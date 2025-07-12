@@ -1,10 +1,73 @@
 
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "@/hooks/use-toast";
 
 const Jobs = () => {
+  const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    jlptLevel: "",
+    currentLevel: "",
+    experience: "",
+    motivation: "",
+    availability: "",
+    portfolio: "",
+    agreeToTerms: false
+  });
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Here you would typically send the form data to your backend
+    console.log("Application submitted for:", selectedJob?.position);
+    console.log("Form data:", formData);
+    
+    toast({
+      title: "Application Submitted!",
+      description: `Your application for ${selectedJob?.position} at ${selectedJob?.company} has been submitted successfully.`,
+    });
+    
+    setIsFormOpen(false);
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      jlptLevel: "",
+      currentLevel: "",
+      experience: "",
+      motivation: "",
+      availability: "",
+      portfolio: "",
+      agreeToTerms: false
+    });
+  };
+
+  const handleInputChange = (field: string, value: string | boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const openApplicationForm = (internship: any) => {
+    setSelectedJob(internship);
+    setIsFormOpen(true);
+  };
+
   const internships = [
     {
       company: "Tokyo Tech Solutions",
@@ -189,7 +252,10 @@ const Jobs = () => {
                     </ul>
                   </div>
                   
-                  <Button className="w-full mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                  <Button 
+                    className="w-full mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    onClick={() => openApplicationForm(internship)}
+                  >
                     Apply Now →
                   </Button>
                 </div>
@@ -223,6 +289,205 @@ const Jobs = () => {
           </div>
         </div>
       </div>
+
+      {/* Job Application Form Dialog */}
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-gray-900">
+              Apply for {selectedJob?.position}
+            </DialogTitle>
+            <DialogDescription className="text-gray-600">
+              {selectedJob?.company} • {selectedJob?.location} • {selectedJob?.duration}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleFormSubmit} className="space-y-6">
+            {/* Personal Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Personal Information</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name *</Label>
+                  <Input
+                    id="firstName"
+                    value={formData.firstName}
+                    onChange={(e) => handleInputChange("firstName", e.target.value)}
+                    required
+                    placeholder="Enter your first name"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name *</Label>
+                  <Input
+                    id="lastName"
+                    value={formData.lastName}
+                    onChange={(e) => handleInputChange("lastName", e.target.value)}
+                    required
+                    placeholder="Enter your last name"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    required
+                    placeholder="your.email@example.com"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    placeholder="+1 (555) 123-4567"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Japanese Language Skills */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Japanese Language Skills</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="jlptLevel">JLPT Level *</Label>
+                  <Select value={formData.jlptLevel} onValueChange={(value) => handleInputChange("jlptLevel", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your JLPT level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="N5">N5 - Basic</SelectItem>
+                      <SelectItem value="N4">N4 - Elementary</SelectItem>
+                      <SelectItem value="N3">N3 - Intermediate</SelectItem>
+                      <SelectItem value="N2">N2 - Pre-Advanced</SelectItem>
+                      <SelectItem value="N1">N1 - Advanced</SelectItem>
+                      <SelectItem value="None">No JLPT Certificate</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="currentLevel">Current Japanese Level *</Label>
+                  <Select value={formData.currentLevel} onValueChange={(value) => handleInputChange("currentLevel", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your current level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Beginner">Beginner</SelectItem>
+                      <SelectItem value="Elementary">Elementary</SelectItem>
+                      <SelectItem value="Intermediate">Intermediate</SelectItem>
+                      <SelectItem value="Advanced">Advanced</SelectItem>
+                      <SelectItem value="Native">Native/Fluent</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* Experience & Motivation */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Experience & Motivation</h3>
+              
+              <div className="space-y-2">
+                <Label htmlFor="experience">Relevant Experience *</Label>
+                <Textarea
+                  id="experience"
+                  value={formData.experience}
+                  onChange={(e) => handleInputChange("experience", e.target.value)}
+                  required
+                  placeholder="Describe your relevant experience, skills, and background..."
+                  rows={4}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="motivation">Motivation & Goals *</Label>
+                <Textarea
+                  id="motivation"
+                  value={formData.motivation}
+                  onChange={(e) => handleInputChange("motivation", e.target.value)}
+                  required
+                  placeholder="Why are you interested in this position? What are your career goals?"
+                  rows={4}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="availability">Availability *</Label>
+                <Select value={formData.availability} onValueChange={(value) => handleInputChange("availability", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your availability" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Immediate">Immediate</SelectItem>
+                    <SelectItem value="1-2 weeks">1-2 weeks</SelectItem>
+                    <SelectItem value="1 month">1 month</SelectItem>
+                    <SelectItem value="2-3 months">2-3 months</SelectItem>
+                    <SelectItem value="Flexible">Flexible</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="portfolio">Portfolio/Work Samples URL</Label>
+                <Input
+                  id="portfolio"
+                  type="url"
+                  value={formData.portfolio}
+                  onChange={(e) => handleInputChange("portfolio", e.target.value)}
+                  placeholder="https://your-portfolio.com"
+                />
+              </div>
+            </div>
+
+            {/* Terms & Conditions */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="agreeToTerms"
+                  checked={formData.agreeToTerms}
+                  onCheckedChange={(checked) => handleInputChange("agreeToTerms", checked as boolean)}
+                  required
+                />
+                <Label htmlFor="agreeToTerms" className="text-sm">
+                  I agree to the terms and conditions and consent to the processing of my personal data *
+                </Label>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex gap-4 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsFormOpen(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                Submit Application
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
