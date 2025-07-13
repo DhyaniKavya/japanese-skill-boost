@@ -40,7 +40,19 @@ const Chat = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  const API_KEY = 'AIzaSyA4qjbRCf3MqBo5p_OmuM4KWFnRM3Q4tG8';
+  const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyA4qjbRCf3MqBo5p_OmuM4KWFnRM3Q4tG8';
+  
+  // Debug logging
+  console.log('Environment variables:', {
+    VITE_GEMINI_API_KEY: import.meta.env.VITE_GEMINI_API_KEY,
+    MODE: import.meta.env.MODE,
+    DEV: import.meta.env.DEV,
+    API_KEY: API_KEY
+  });
+  
+  if (!import.meta.env.VITE_GEMINI_API_KEY) {
+    console.warn('VITE_GEMINI_API_KEY not found in environment, using fallback');
+  }
 
   // Save messages to localStorage whenever messages change
   useEffect(() => {
