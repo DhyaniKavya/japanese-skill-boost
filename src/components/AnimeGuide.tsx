@@ -76,16 +76,19 @@ const AnimeGuide: React.FC<AnimeGuideProps> = ({
       {/* Character Avatar */}
       <div className="relative group">
         {/* Main Character Circle */}
-        <div className={`
-          w-32 h-32 md:w-40 md:h-40 rounded-full 
-          bg-gradient-to-br ${currentCharacter.color} 
-          shadow-2xl hover:shadow-3xl 
-          flex items-center justify-center 
-          cursor-pointer transition-all duration-500 
-          hover:scale-110 hover:-translate-y-2
-          border-4 border-white/30 backdrop-blur-sm
-          ${position === 'floating' ? 'animate-pulse' : ''}
-        `}>
+        <div 
+          className={`
+            w-32 h-32 md:w-40 md:h-40 rounded-full 
+            bg-gradient-to-br ${currentCharacter.color} 
+            shadow-2xl hover:shadow-3xl 
+            flex items-center justify-center 
+            cursor-pointer transition-all duration-500 
+            hover:scale-110 hover:-translate-y-2
+            border-4 border-white/30 backdrop-blur-sm
+            ${position === 'floating' ? 'animate-pulse' : ''}
+          `}
+          onClick={() => setShowMessage(!showMessage)}
+        >
           <div className="text-4xl md:text-5xl animate-bounce">
             {currentCharacter.emoji}
           </div>
@@ -110,10 +113,10 @@ const AnimeGuide: React.FC<AnimeGuideProps> = ({
         {/* Speech Bubble */}
         {showMessage && (
           <Card className={`
-            absolute ${position === 'hero' ? '-left-80 top-4' : position === 'cta' ? '-left-80 top-4' : '-left-72 -top-32'}
-            w-72 max-w-sm animate-scale-in
+            absolute ${position === 'hero' ? '-right-4 -top-40 lg:-right-80 lg:top-4' : position === 'cta' ? '-left-4 -top-40 lg:-left-80 lg:top-4' : '-left-72 -top-32'}
+            w-64 sm:w-72 max-w-[calc(100vw-2rem)] lg:max-w-sm animate-scale-in
             ${theme === 'light' ? 'bg-white/95' : 'bg-gray-900/95'}
-            backdrop-blur-sm border-0 shadow-2xl
+            backdrop-blur-sm border-0 shadow-2xl z-[100]
           `}>
             <CardContent className="p-4">
               <div className="flex justify-between items-start mb-2">
@@ -168,11 +171,10 @@ const AnimeGuide: React.FC<AnimeGuideProps> = ({
             
             {/* Speech Bubble Tail */}
             <div className={`
-              absolute ${position === 'hero' || position === 'cta' ? 'right-0 top-8' : 'right-0 bottom-8'}
-              w-0 h-0 border-l-8 border-t-8 border-b-8
-              border-l-transparent border-t-transparent border-b-transparent
-              ${theme === 'light' ? 'border-r-white/95' : 'border-r-gray-900/95'}
-              transform translate-x-2
+              absolute ${position === 'hero' ? 'lg:left-0 lg:top-8 right-4 bottom-0' : position === 'cta' ? 'lg:right-0 lg:top-8 left-4 bottom-0' : 'right-0 bottom-8'}
+              w-0 h-0 ${position === 'cta' ? 'border-l-8 border-t-8 border-b-8 border-l-transparent border-t-transparent border-b-transparent' : 'border-r-8 border-t-8 border-b-8 border-r-transparent border-t-transparent border-b-transparent'}
+              ${theme === 'light' ? position === 'cta' ? 'border-r-white/95' : 'border-l-white/95' : position === 'cta' ? 'border-r-gray-900/95' : 'border-l-gray-900/95'}
+              transform ${position === 'cta' ? 'translate-x-2' : '-translate-x-2'}
             `} />
           </Card>
         )}

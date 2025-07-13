@@ -32,18 +32,31 @@ const Chat = () => {
   const API_KEY = 'AIzaSyA4qjbRCf3MqBo5p_OmuM4KWFnRM3Q4tG8';
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   useEffect(() => {
-    scrollToBottom();
+    // Scroll to bottom whenever messages change
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    return () => clearTimeout(timer);
   }, [messages]);
+
+  // Function to detect language
+  const detectLanguage = (text: string): 'japanese' | 'english' => {
+    // Simple Japanese character detection
+    const japaneseRegex = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/;
+    return japaneseRegex.test(text) ? 'japanese' : 'english';
+  };
 
   const getAIResponse = async (userMessage: string, language: 'japanese' | 'english'): Promise<string> => {
     try {
       const languageContext = language === 'japanese' 
-        ? 'Please respond in Japanese when appropriate, and help with Japanese language learning. Mix Japanese and English as needed for learning.'
-        : 'Please respond in English and help with any questions the user has.';
+        ? 'You are a helpful Japanese language learning assistant. Respond in Japanese when appropriate, and help with Japanese language learning. Mix Japanese and English as needed for learning. Keep responses concise and helpful. Do not use asterisks or markdown formatting.'
+        : 'You are a helpful assistant. Respond in English and help with any questions the user has. Keep responses concise and helpful. Do not use asterisks or markdown formatting.';
 
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
         method: 'POST',
@@ -60,7 +73,7 @@ const Chat = () => {
             temperature: 0.7,
             topP: 0.8,
             topK: 40,
-            maxOutputTokens: 1000,
+            maxOutputTokens: 500,
           }
         })
       });
@@ -72,7 +85,10 @@ const Chat = () => {
       const data = await response.json();
       
       if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-        return data.candidates[0].content.parts[0].text;
+        let responseText = data.candidates[0].content.parts[0].text;
+        // Remove asterisks and clean up the response
+        responseText = responseText.replace(/\*\*/g, '').replace(/\*/g, '').trim();
+        return responseText;
       } else {
         throw new Error('No response generated');
       }
@@ -96,6 +112,28 @@ const Chat = () => {
   const handleSendMessage = async () => {
     if (!inputText.trim()) return;
 
+    // Detect the language of the user's message
+    const detectedLanguage = detectLanguage(inputText);
+    
+    // Check if the user is using the correct language for the selected mode
+    if (detectedLanguage !== currentLanguage) {
+      const warningMessage: Message = {
+        id: Date.now().toString() + '-warning',
+        text: currentLanguage === 'japanese' 
+          ? 'Please Select English Language' 
+          : '日本語を選択してください',
+        isUser: false,
+        timestamp: new Date(),
+        language: currentLanguage
+      };
+      
+      setMessages(prev => [...prev, warningMessage]);
+      setInputText('');
+      // Scroll to show warning message
+      setTimeout(() => scrollToBottom(), 100);
+      return;
+    }
+
     const userMessage: Message = {
       id: Date.now().toString() + '-user',
       text: inputText,
@@ -108,6 +146,9 @@ const Chat = () => {
     const messageText = inputText;
     setInputText('');
     setIsTyping(true);
+
+    // Scroll to show user message
+    setTimeout(() => scrollToBottom(), 100);
 
     try {
       const aiResponseText = await getAIResponse(messageText, currentLanguage);
@@ -177,7 +218,7 @@ const Chat = () => {
               
               <CardContent className="flex-1 flex flex-col">
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2">
+                <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2 scroll-smooth">
                   {messages.map((message) => (
                     <div
                       key={message.id}
@@ -187,16 +228,26 @@ const Chat = () => {
                         className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                           message.isUser
                             ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white'
+                            : message.id.includes('warning')
+                            ? 'bg-yellow-100 border border-yellow-300 text-yellow-800 shadow-sm'
                             : 'bg-white/90 border border-pink-200 text-gray-900 shadow-sm'
                         }`}
                       >
                         <div className="flex items-center gap-2 mb-1">
-                          {!message.isUser && <span className="text-lg">🌸</span>}
-                          <Badge variant="secondary" className="text-xs bg-pink-50 text-pink-700">
-                            {message.language === 'japanese' ? '日本語' : 'English'}
+                          {!message.isUser && !message.id.includes('warning') && <span className="text-lg">🌸</span>}
+                          {message.id.includes('warning') && <span className="text-lg">⚠️</span>}
+                          <Badge variant="secondary" className={`text-xs ${
+                            message.id.includes('warning') 
+                              ? 'bg-yellow-200 text-yellow-800' 
+                              : 'bg-pink-50 text-pink-700'
+                          }`}>
+                            {message.id.includes('warning') 
+                              ? 'Warning' 
+                              : message.language === 'japanese' ? '日本語' : 'English'
+                            }
                           </Badge>
                         </div>
-                        <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                        <p className="text-sm whitespace-pre-wrap break-words">{message.text}</p>
                         <p className="text-xs opacity-70 mt-2">
                           {message.timestamp.toLocaleTimeString()}
                         </p>
@@ -218,7 +269,7 @@ const Chat = () => {
                       </div>
                     </div>
                   )}
-                  <div ref={messagesEndRef} />
+                  <div ref={messagesEndRef} className="h-4" />
                 </div>
                 
                 {/* Input */}
