@@ -46,7 +46,7 @@ const Navigation = () => {
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-bold bg-gradient-to-r from-red-600 via-pink-600 to-red-700 bg-clip-text text-transparent">
-                Nihongo Portal
+                Nihongo Warriors
               </span>
               <span className="text-xs text-gray-500 font-medium">Learn Japanese Faster</span>
             </div>
