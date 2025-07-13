@@ -71,6 +71,9 @@ const AnimeGuide: React.FC<AnimeGuideProps> = ({
     }
   };
 
+  // Check if message should be hidden on mobile for sakura and yuki
+  const shouldHideMessageOnMobile = (character === 'sakura' || character === 'yuki');
+
   return (
     <div className={`${getPositionClasses()} ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}>
       {/* Character Avatar */}
@@ -110,13 +113,83 @@ const AnimeGuide: React.FC<AnimeGuideProps> = ({
           </div>
         </div>
 
-        {/* Speech Bubble */}
-        {showMessage && (
+        {/* Speech Bubble - Hidden on mobile for sakura and yuki */}
+        {showMessage && !shouldHideMessageOnMobile && (
           <Card className={`
             absolute ${position === 'hero' ? '-right-4 -top-40 lg:-right-80 lg:top-4' : position === 'cta' ? '-left-4 -top-40 lg:-left-80 lg:top-4' : '-left-72 -top-32'}
             w-64 sm:w-72 max-w-[calc(100vw-2rem)] lg:max-w-sm animate-scale-in
             ${theme === 'light' ? 'bg-white/95' : 'bg-gray-900/95'}
             backdrop-blur-sm border-0 shadow-2xl z-[100]
+          `}>
+            <CardContent className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div className={`
+                  text-xs font-medium 
+                  ${theme === 'light' ? 'text-gray-600' : 'text-gray-300'}
+                `}>
+                  {currentCharacter.name} says:
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowMessage(false)}
+                  className="h-6 w-6 p-0 hover:bg-gray-100"
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
+              <p className={`
+                text-sm leading-relaxed 
+                ${theme === 'light' ? 'text-gray-800' : 'text-white'}
+              `}>
+                {message}
+              </p>
+              
+              {/* Message Actions */}
+              <div className="flex justify-end mt-3 space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`
+                    text-xs h-7 px-2
+                    ${theme === 'light' ? 'hover:bg-gray-100 text-gray-600' : 'hover:bg-gray-800 text-gray-300'}
+                  `}
+                >
+                  <MessageCircle className="w-3 h-3 mr-1" />
+                  Reply
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`
+                    text-xs h-7 px-2
+                    ${theme === 'light' ? 'hover:bg-gray-100 text-gray-600' : 'hover:bg-gray-800 text-gray-300'}
+                  `}
+                >
+                  <Heart className="w-3 h-3 mr-1" />
+                  Like
+                </Button>
+              </div>
+            </CardContent>
+            
+            {/* Speech Bubble Tail */}
+            <div className={`
+              absolute ${position === 'hero' ? 'lg:left-0 lg:top-8 right-4 bottom-0' : position === 'cta' ? 'lg:right-0 lg:top-8 left-4 bottom-0' : 'right-0 bottom-8'}
+              w-0 h-0 ${position === 'cta' ? 'border-l-8 border-t-8 border-b-8 border-l-transparent border-t-transparent border-b-transparent' : 'border-r-8 border-t-8 border-b-8 border-r-transparent border-t-transparent border-b-transparent'}
+              ${theme === 'light' ? position === 'cta' ? 'border-r-white/95' : 'border-l-white/95' : position === 'cta' ? 'border-r-gray-900/95' : 'border-l-gray-900/95'}
+              transform ${position === 'cta' ? 'translate-x-2' : '-translate-x-2'}
+            `} />
+          </Card>
+        )}
+
+        {/* Speech Bubble - Only visible on desktop for sakura and yuki */}
+        {showMessage && shouldHideMessageOnMobile && (
+          <Card className={`
+            absolute ${position === 'hero' ? '-right-4 -top-40 lg:-right-80 lg:top-4' : position === 'cta' ? '-left-4 -top-40 lg:-left-80 lg:top-4' : '-left-72 -top-32'}
+            w-64 sm:w-72 max-w-[calc(100vw-2rem)] lg:max-w-sm animate-scale-in
+            ${theme === 'light' ? 'bg-white/95' : 'bg-gray-900/95'}
+            backdrop-blur-sm border-0 shadow-2xl z-[100]
+            hidden lg:block
           `}>
             <CardContent className="p-4">
               <div className="flex justify-between items-start mb-2">

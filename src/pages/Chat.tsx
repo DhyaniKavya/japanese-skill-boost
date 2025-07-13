@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
 
 interface Message {
   id: string;
@@ -15,21 +16,36 @@ interface Message {
 }
 
 const Chat = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
+  const [messages, setMessages] = useState<Message[]>(() => {
+    // Load messages from localStorage on component mount
+    const savedMessages = localStorage.getItem('chat-messages');
+    if (savedMessages) {
+      const parsed = JSON.parse(savedMessages);
+      return parsed.map((msg: any) => ({
+        ...msg,
+        timestamp: new Date(msg.timestamp)
+      }));
+    }
+    return [{
       id: '1',
       text: 'こんにちは！日本語で話しましょう！Hello! Let\'s practice Japanese together! I can now answer any questions you have using AI!',
       isUser: false,
       timestamp: new Date(),
       language: 'japanese'
-    }
-  ]);
+    }];
+  });
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState<'japanese' | 'english'>('japanese');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const API_KEY = 'AIzaSyA4qjbRCf3MqBo5p_OmuM4KWFnRM3Q4tG8';
+
+  // Save messages to localStorage whenever messages change
+  useEffect(() => {
+    localStorage.setItem('chat-messages', JSON.stringify(messages));
+  }, [messages]);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -176,6 +192,17 @@ const Chat = () => {
     }
   };
 
+  const clearChat = () => {
+    setMessages([{
+      id: '1',
+      text: 'こんにちは！日本語で話しましょう！Hello! Let\'s practice Japanese together! I can now answer any questions you have using AI!',
+      isUser: false,
+      timestamp: new Date(),
+      language: 'japanese'
+    }]);
+    toast.success('Chat history cleared!');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
       <Navigation />
@@ -212,13 +239,26 @@ const Chat = () => {
                     >
                       🇺🇸 English
                     </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={clearChat}
+                      className="border-red-300 text-red-600 hover:bg-red-50"
+                      title="Clear chat history"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
               </CardHeader>
               
-              <CardContent className="flex-1 flex flex-col">
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2 scroll-smooth">
+              <CardContent className="flex-1 flex flex-col p-0">
+                {/* Messages Container with proper overflow handling */}
+                <div 
+                  ref={messagesContainerRef}
+                  className="flex-1 overflow-y-auto space-y-4 p-4 scroll-smooth"
+                  style={{ maxHeight: 'calc(600px - 140px)' }}
+                >
                   {messages.map((message) => (
                     <div
                       key={message.id}
@@ -273,7 +313,7 @@ const Chat = () => {
                 </div>
                 
                 {/* Input */}
-                <div className="flex gap-2">
+                <div className="flex gap-2 p-4 border-t border-pink-200 bg-white/50">
                   <Input
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
@@ -319,6 +359,10 @@ const Chat = () => {
                     <span className="text-pink-500">✓</span>
                     <span>Instant answers</span>
                   </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-pink-500">✓</span>
+                    <span>Persistent chat history</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -334,6 +378,7 @@ const Chat = () => {
                   <p>• I can help with grammar and translation</p>
                   <p>• Practice conversations with me</p>
                   <p>• Ask about Japanese culture</p>
+                  <p>• Your chat history is saved automatically</p>
                 </div>
               </CardContent>
             </Card>
