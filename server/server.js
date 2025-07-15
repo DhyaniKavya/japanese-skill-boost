@@ -12,10 +12,19 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: '*',
+  origin: [
+    'http://localhost:8080',
+    'http://localhost:8081',
+    'http://localhost:8082',
+    'http://localhost:8083',
+    'http://localhost:5000',
+    'https://japanese-skill-boost.vercel.app',
+    'https://japanese-skill-boost-server.vercel.app'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-  maxAge: 86400 // Cache preflight request for 24 hours
+  maxAge: 86400, // Cache preflight request for 24 hours
+  optionsSuccessStatus: 204
 };
 
 // Middleware

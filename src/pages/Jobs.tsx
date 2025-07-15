@@ -76,6 +76,7 @@ const Jobs = () => {
           'Accept': 'application/json',
         },
         mode: 'cors',
+        keepalive: true,
         body: JSON.stringify({
           selectedJob,
           formData: {
