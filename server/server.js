@@ -12,9 +12,18 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: ['http://localhost:8080', 'http://localhost:8081', 'http://localhost:8082', 'http://localhost:3000'],
+  origin: [
+    'http://localhost:8080', 
+    'http://localhost:8081', 
+    'http://localhost:8082', 
+    'http://localhost:3000',
+    'https://japanese-skill-boost.vercel.app',
+    'https://japanese-skill-boost-git-main.vercel.app',
+    'https://japanese-skill-boost-*.vercel.app'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 };
 
 // Middleware

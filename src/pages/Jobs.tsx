@@ -66,7 +66,10 @@ const Jobs = () => {
     
     try {
       // Send the form data to our backend API
-      const response = await fetch('http://localhost:5000/api/applications', {
+      const apiUrl = import.meta.env.PROD 
+        ? 'https://japanese-skill-boost-server.vercel.app/api/applications' 
+        : 'http://localhost:5000/api/applications';
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
