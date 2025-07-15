@@ -35,7 +35,15 @@ app.use(express.json());
 console.log('Attempting to connect to MongoDB...');
 console.log(`MongoDB URI: ${process.env.MONGODB_URI}`);
 
-mongoose.connect(process.env.MONGODB_URI)
+const mongooseOptions = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+  family: 4 // Use IPv4, skip trying IPv6
+};
+
+mongoose.connect(process.env.MONGODB_URI, mongooseOptions)
   .then(() => {
     console.log('✅ Successfully connected to MongoDB!');
     console.log('Database connection is working properly.');
@@ -43,7 +51,21 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => {
     console.error('❌ MongoDB connection error:');
     console.error(err);
+    process.exit(1); // Exit if unable to connect to database
   });
+
+// Handle MongoDB connection events
+mongoose.connection.on('error', (err) => {
+  console.error('MongoDB connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('MongoDB disconnected. Attempting to reconnect...');
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log('MongoDB reconnected successfully!');
+});
 
 // Import routes
 const applicationRoutes = require('./routes/applications');
