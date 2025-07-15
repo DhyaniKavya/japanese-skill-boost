@@ -1,0 +1,18 @@
+{
+  "name": "japanese-skill-boost-server",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "description": "Backend server for Japanese Skill Boost application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test-db-connection.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "express": "^4.18.2",
+    "mongoose": "^8.0.0",
+    "node-fetch": "^3.3.2"
+  }
+}

@@ -1,0 +1,3 @@
+@echo off
+echo Starting Japanese Skill Boost Backend Server...
+node server.js

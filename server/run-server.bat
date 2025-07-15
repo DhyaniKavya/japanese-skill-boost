@@ -1,0 +1,6 @@
+@echo off
+echo Testing MongoDB connection...
+node simple-test.js
+echo.
+echo Starting server...
+node server.js

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
+
+// Country codes for phone number selection
+const countryCodes = [
+  { code: "+1", country: "United States/Canada" },
+  { code: "+44", country: "United Kingdom" },
+  { code: "+81", country: "Japan" },
+  { code: "+61", country: "Australia" },
+  { code: "+64", country: "New Zealand" },
+  { code: "+33", country: "France" },
+  { code: "+49", country: "Germany" },
+  { code: "+86", country: "China" },
+  { code: "+82", country: "South Korea" },
+  { code: "+91", country: "India" },
+  { code: "+65", country: "Singapore" },
+  { code: "+66", country: "Thailand" },
+  { code: "+84", country: "Vietnam" },
+  { code: "+62", country: "Indonesia" },
+  { code: "+60", country: "Malaysia" },
+  { code: "+63", country: "Philippines" },
+  { code: "+39", country: "Italy" },
+  { code: "+34", country: "Spain" },
+];
 
 const Jobs = () => {
   const [selectedJob, setSelectedJob] = useState<any>(null);
@@ -19,6 +42,7 @@ const Jobs = () => {
     firstName: "",
     lastName: "",
     email: "",
+    countryCode: "+1",
     phone: "",
     jlptLevel: "",
     currentLevel: "",
@@ -28,32 +52,85 @@ const Jobs = () => {
     portfolio: "",
     agreeToTerms: false
   });
+  
+  const [phoneError, setPhoneError] = useState("");
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send the form data to your backend
-    console.log("Application submitted for:", selectedJob?.position);
-    console.log("Form data:", formData);
     
-    toast({
-      title: "Application Submitted!",
-      description: `Your application for ${selectedJob?.position} at ${selectedJob?.company} has been submitted successfully.`,
-    });
+    // Validate phone number (must be exactly 10 digits)
+    if (formData.phone && !/^\d{10}$/.test(formData.phone)) {
+      setPhoneError("Please enter a valid 10-digit phone number");
+      return;
+    }
     
-    setIsFormOpen(false);
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      jlptLevel: "",
-      currentLevel: "",
-      experience: "",
-      motivation: "",
-      availability: "",
-      portfolio: "",
-      agreeToTerms: false
-    });
+    try {
+      // Send the form data to our backend API
+      const response = await fetch('http://localhost:5000/api/applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          selectedJob,
+          formData: {
+            ...formData,
+            phone: formData.phone ? `${formData.countryCode} ${formData.phone}` : ""
+          }
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        toast({
+          title: "Application Submitted!",
+          description: (
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-green-500" />
+              <span>Your application for {selectedJob?.position} at {selectedJob?.company} has been submitted successfully.</span>
+            </div>
+          ),
+          className: "bg-green-50 border-green-200 text-green-800"
+        });
+        
+        // Reset form and close dialog
+        setIsFormOpen(false);
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          countryCode: "+1",
+          phone: "",
+          jlptLevel: "",
+          currentLevel: "",
+          experience: "",
+          motivation: "",
+          availability: "",
+          portfolio: "",
+          agreeToTerms: false
+        });
+        setPhoneError("");
+      } else {
+        toast({
+          title: "Submission Error",
+          description: (
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-red-500" />
+              <span>{data.message || "There was an error submitting your application. Please try again."}</span>
+            </div>
+          ),
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error("Error submitting application:", error);
+      toast({
+        title: "Submission Error",
+        description: "There was an error connecting to the server. Please try again later.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -61,6 +138,29 @@ const Jobs = () => {
       ...prev,
       [field]: value
     }));
+    
+    // Clear phone error when user types in phone field
+    if (field === 'phone') {
+      // Validate phone number format (numbers only)
+      if (typeof value === 'string') {
+        const numericValue = value.replace(/\D/g, '');
+        if (value !== numericValue) {
+          setFormData(prev => ({
+            ...prev,
+            phone: numericValue
+          }));
+        }
+        
+        // Check if it's a valid 10-digit number
+        if (numericValue.length === 10) {
+          setPhoneError("");
+        } else if (numericValue.length > 0) {
+          setPhoneError("Phone number must be exactly 10 digits");
+        } else {
+          setPhoneError(""); // Empty is allowed
+        }
+      }
+    }
   };
 
   const openApplicationForm = (internship: any) => {
@@ -78,7 +178,7 @@ const Jobs = () => {
       type: "Tech",
       description: "Work on cutting-edge web applications while improving your Japanese in a professional environment.",
       requirements: ["Basic programming knowledge", "Japanese N3 or higher", "English communication"],
-      benefits: ["Mentorship program", "Japanese language support", "Certificate upon completion"]
+      benefits: ["Mentorship program", "Japanese language support", "Certificate upon completion", "¥150,000/month stipend"]
     },
     {
       company: "Osaka Design Studio",
@@ -89,7 +189,7 @@ const Jobs = () => {
       type: "Design",
       description: "Create beautiful user interfaces for Japanese mobile applications and websites.",
       requirements: ["Portfolio required", "Figma/Adobe skills", "Japanese N4 or higher"],
-      benefits: ["Portfolio development", "Design mentorship", "Cultural exchange sessions"]
+      benefits: ["Portfolio development", "Design mentorship", "Cultural exchange sessions", "¥120,000/month stipend"]
     },
     {
       company: "Kyoto Language Exchange",
@@ -100,7 +200,7 @@ const Jobs = () => {
       type: "Content",
       description: "Create educational content for Japanese language learners and cultural materials.",
       requirements: ["Strong writing skills", "Japanese N2 or higher", "Content creation experience"],
-      benefits: ["Published work portfolio", "Language certification", "Cultural immersion"]
+      benefits: ["Published work portfolio", "Language certification", "Cultural immersion", "¥100,000/month stipend"]
     },
     {
       company: "Hiroshima Global Trading",
@@ -111,7 +211,7 @@ const Jobs = () => {
       type: "Business",
       description: "Support international business operations and Japanese market research.",
       requirements: ["Business interest", "Japanese N2 or higher", "Research skills"],
-      benefits: ["Business experience", "Networking opportunities", "Reference letter"]
+      benefits: ["Business experience", "Networking opportunities", "Reference letter", "¥130,000/month stipend"]
     },
     {
       company: "Sendai Game Studio",
@@ -122,7 +222,7 @@ const Jobs = () => {
       type: "Gaming",
       description: "Test and provide feedback on Japanese mobile games and applications.",
       requirements: ["Gaming experience", "Japanese N4 or higher", "Attention to detail"],
-      benefits: ["Game industry exposure", "Testing certification", "Team collaboration"]
+      benefits: ["Game industry exposure", "Testing certification", "Team collaboration", "¥110,000/month stipend"]
     },
     {
       company: "Fukuoka Tourism Board",
@@ -133,7 +233,51 @@ const Jobs = () => {
       type: "Tourism",
       description: "Create tourism content and help promote Japanese culture to international visitors.",
       requirements: ["Cultural interest", "Japanese N3 or higher", "Social media skills"],
-      benefits: ["Cultural certification", "Tourism industry knowledge", "Content portfolio"]
+      benefits: ["Cultural certification", "Tourism industry knowledge", "Content portfolio", "¥120,000/month stipend"]
+    },
+    {
+      company: "Sapporo Tech Innovations",
+      position: "Mobile App Developer Intern",
+      location: "Sapporo (Remote)",
+      duration: "3-6 months",
+      level: "N3+",
+      type: "Tech",
+      description: "Develop innovative mobile applications for the Japanese market with a focus on user experience.",
+      requirements: ["Mobile development experience", "Japanese N3 or higher", "Problem-solving skills"],
+      benefits: ["Project portfolio", "Technical mentorship", "Industry connections", "¥140,000/month stipend"]
+    },
+    {
+      company: "Nagoya Automotive Tech",
+      position: "Automotive Software Intern",
+      location: "Nagoya (Remote)",
+      duration: "4-8 months",
+      level: "N3+",
+      type: "Tech",
+      description: "Work on cutting-edge automotive software solutions for Japanese car manufacturers.",
+      requirements: ["Programming knowledge", "Japanese N3 or higher", "Interest in automotive industry"],
+      benefits: ["Industry certification", "Technical training", "Career advancement", "¥160,000/month stipend"]
+    },
+    {
+      company: "Okinawa Digital Marketing",
+      position: "Digital Marketing Intern",
+      location: "Okinawa (Remote)",
+      duration: "2-4 months",
+      level: "N4+",
+      type: "Marketing",
+      description: "Create and manage digital marketing campaigns for Japanese businesses targeting international markets.",
+      requirements: ["Marketing knowledge", "Japanese N4 or higher", "Social media skills"],
+      benefits: ["Marketing portfolio", "Industry connections", "Performance bonuses", "¥110,000/month stipend"]
+    },
+    {
+      company: "Kobe Animation Studio",
+      position: "Animation Assistant Intern",
+      location: "Kobe (Remote)",
+      duration: "3-6 months",
+      level: "N3+",
+      type: "Creative",
+      description: "Assist in the creation of animated content for Japanese studios, gaining hands-on experience in the anime industry.",
+      requirements: ["Animation skills", "Japanese N3 or higher", "Creative portfolio"],
+      benefits: ["Industry exposure", "Portfolio development", "Creative mentorship", "¥125,000/month stipend"]
     }
   ];
 
@@ -199,7 +343,7 @@ const Jobs = () => {
         {/* Internships Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {internships.map((internship, index) => (
-            <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/60 backdrop-blur-sm">
+            <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/60 backdrop-blur-sm hover:bg-white/80 hover:scale-[1.01]">
               <CardHeader>
                 <div className="flex justify-between items-start mb-4">
                   <div>
@@ -346,13 +490,35 @@ const Jobs = () => {
                 
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                    placeholder="+1 (555) 123-4567"
-                  />
+                  <div className="flex gap-2">
+                    <div className="w-1/3">
+                      <Select value={formData.countryCode} onValueChange={(value) => handleInputChange("countryCode", value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Code" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countryCodes.map((country) => (
+                            <SelectItem key={country.code} value={country.code}>
+                              {country.code} {country.country}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="w-2/3">
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange("phone", e.target.value)}
+                        placeholder="10-digit number"
+                        className={phoneError ? "border-red-500" : ""}
+                      />
+                    </div>
+                  </div>
+                  {phoneError && (
+                    <p className="text-sm text-red-500 mt-1">{phoneError}</p>
+                  )}
                 </div>
               </div>
             </div>

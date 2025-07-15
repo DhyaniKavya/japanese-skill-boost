@@ -1,0 +1,10 @@
+{
+  "name": "test-application-submission",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Test script for job application submission",
+  "main": "test-application-submission.js",
+  "dependencies": {
+    "node-fetch": "^3.3.0"
+  }
+}
