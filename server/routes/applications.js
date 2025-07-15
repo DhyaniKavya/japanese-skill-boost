@@ -75,9 +75,26 @@ router.post('/', async (req, res) => {
     });
   } catch (error) {
     console.error('Error submitting application:', error);
+    // Check for specific MongoDB errors
+    if (error.name === 'MongoError' || error.name === 'MongoServerError') {
+      return res.status(503).json({
+        success: false,
+        message: 'Database connection error. Please try again later.',
+        error: error.message
+      });
+    }
+    // Check for validation errors
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid application data',
+        error: error.message
+      });
+    }
+    // Generic error
     res.status(500).json({
       success: false,
-      message: 'Server error',
+      message: 'An unexpected error occurred. Please try again later.',
       error: error.message
     });
   }

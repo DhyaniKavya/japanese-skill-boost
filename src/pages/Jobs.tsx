@@ -75,9 +75,7 @@ const Jobs = () => {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        credentials: 'include',
         mode: 'cors',
-        cache: 'no-cache',
         body: JSON.stringify({
           selectedJob,
           formData: {
