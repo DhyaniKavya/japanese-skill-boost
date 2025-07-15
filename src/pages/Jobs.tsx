@@ -73,7 +73,11 @@ const Jobs = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
+        credentials: 'include',
+        mode: 'cors',
+        cache: 'no-cache',
         body: JSON.stringify({
           selectedJob,
           formData: {
@@ -82,6 +86,11 @@ const Jobs = () => {
           }
         }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit application');
+      }
       
       const data = await response.json();
       
@@ -128,9 +137,25 @@ const Jobs = () => {
       }
     } catch (error) {
       console.error("Error submitting application:", error);
+      let errorMessage = "There was an error connecting to the server. Please try again later.";
+      
+      // Check if the error response contains a message
+      if (error instanceof Error) {
+        const fetchError = error as any;
+        if (fetchError.response) {
+          const responseData = await fetchError.response.json();
+          errorMessage = responseData.message || errorMessage;
+        }
+      }
+
       toast({
         title: "Submission Error",
-        description: "There was an error connecting to the server. Please try again later.",
+        description: (
+          <div className="flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-red-500" />
+            <span>{errorMessage}</span>
+          </div>
+        ),
         variant: "destructive"
       });
     }

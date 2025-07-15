@@ -12,6 +12,34 @@ router.post('/', async (req, res) => {
       formData     // Contains applicant details
     } = req.body;
 
+    // Validate required fields
+    if (!selectedJob || !formData) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required job or form data'
+      });
+    }
+
+    // Validate essential form fields
+    const requiredFields = ['firstName', 'lastName', 'email'];
+    for (const field of requiredFields) {
+      if (!formData[field]) {
+        return res.status(400).json({
+          success: false,
+          message: `Missing required field: ${field}`
+        });
+      }
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email format'
+      });
+    }
+
     // Create a new application
     const newApplication = new Application({
       jobDetails: {

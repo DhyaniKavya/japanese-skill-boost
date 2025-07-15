@@ -12,18 +12,26 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: [
-    'http://localhost:8080', 
-    'http://localhost:8081', 
-    'http://localhost:8082', 
-    'http://localhost:3000',
-    'https://japanese-skill-boost.vercel.app',
-    'https://japanese-skill-boost-git-main.vercel.app',
-    'https://japanese-skill-boost-*.vercel.app'
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:8080', 
+      'http://localhost:8081', 
+      'http://localhost:8082', 
+      'http://localhost:3000',
+      'https://japanese-skill-boost.vercel.app',
+      'https://japanese-skill-boost-git-main.vercel.app'
+    ];
+    // Allow requests with no origin (like mobile apps)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  credentials: true,
+  maxAge: 86400 // Cache preflight request for 24 hours
 };
 
 // Middleware
