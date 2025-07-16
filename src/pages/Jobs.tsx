@@ -55,21 +55,6 @@ const Jobs = () => {
   
   const [phoneError, setPhoneError] = useState("");
 
-  // Move sanitizeFormData here so formData is in scope
-  const sanitizeFormData = (data: typeof formData) => ({
-    ...data,
-    firstName: typeof data.firstName === 'string' ? data.firstName.trim() : '',
-    lastName: typeof data.lastName === 'string' ? data.lastName.trim() : '',
-    email: typeof data.email === 'string' ? data.email.trim() : '',
-    phone: typeof data.phone === 'string' ? data.phone.trim() : '',
-    jlptLevel: typeof data.jlptLevel === 'string' ? data.jlptLevel.trim() : '',
-    currentLevel: typeof data.currentLevel === 'string' ? data.currentLevel.trim() : '',
-    experience: typeof data.experience === 'string' ? data.experience.trim() : '',
-    motivation: typeof data.motivation === 'string' ? data.motivation.trim() : '',
-    availability: typeof data.availability === 'string' ? data.availability.trim() : '',
-    portfolio: typeof data.portfolio === 'string' ? data.portfolio.trim() : '',
-  });
-
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -80,10 +65,6 @@ const Jobs = () => {
     }
     
     try {
-      // Sanitize form data before sending
-      const sanitizedFormData = sanitizeFormData(formData);
-      // Log outgoing payload for debugging
-      console.log("Submitting application:", { selectedJob, formData: sanitizedFormData });
       // Send the form data to our backend API
       const apiUrl = import.meta.env.PROD 
         ? 'https://japanese-skill-boost-server.vercel.app/api/applications' 
@@ -99,8 +80,8 @@ const Jobs = () => {
         body: JSON.stringify({
           selectedJob,
           formData: {
-            ...sanitizedFormData,
-            phone: sanitizedFormData.phone ? `${sanitizedFormData.countryCode} ${sanitizedFormData.phone}` : ""
+            ...formData,
+            phone: formData.phone ? `${formData.countryCode} ${formData.phone}` : ""
           }
         }),
       });
